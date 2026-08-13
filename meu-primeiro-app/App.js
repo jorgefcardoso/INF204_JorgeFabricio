@@ -1,7 +1,40 @@
 import React, { useState } from "react";
-import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 
-export default function Contador() {
+const BotaoCustomizado = ({
+  titulo,
+  ativo = true,
+  onPress,
+  tipo,
+}) => {
+  return (
+    <TouchableOpacity
+      style={[
+        styles.botao,
+        ativo
+          ? tipo === "incrementar"
+            ? styles.botaoIncrementar
+            : tipo === "decrementar"
+            ? styles.botaoDecrementar
+            : styles.botaoZerar
+          : styles.botaoDesativado,
+      ]}
+      onPress={onPress}
+      disabled={!ativo}
+    >
+      <Text style={styles.textoBotao}>
+        {titulo}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+export default function App() {
   const [contagem, setContagem] = useState(0);
 
   const incrementar = () => {
@@ -20,30 +53,36 @@ export default function Contador() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Contagem Atual:</Text>
 
-      <Text style={styles.numero}>{contagem}</Text>
+      <Text style={styles.titulo}>
+        Contagem Atual:
+      </Text>
 
-      <TouchableOpacity
-        style={styles.botaoIncrementar}
+      <Text style={styles.numero}>
+        {contagem}
+      </Text>
+
+      <BotaoCustomizado
+        titulo="Incrementar +1"
+        ativo={true}
+        tipo="incrementar"
         onPress={incrementar}
-      >
-        <Text style={styles.textoBotao}>Incrementar +1</Text>
-      </TouchableOpacity>
+      />
 
-      <TouchableOpacity
-        style={styles.botaoDecrementar}
+      <BotaoCustomizado
+        titulo="Decrementar -1"
+        ativo={contagem > 0}
+        tipo="decrementar"
         onPress={decrementar}
-      >
-        <Text style={styles.textoBotao}>Decrementar -1</Text>
-      </TouchableOpacity>
+      />
 
-      <TouchableOpacity
-        style={styles.botaoZerar}
+      <BotaoCustomizado
+        titulo="Zerar"
+        ativo={contagem > 0}
+        tipo="zerar"
         onPress={zerar}
-      >
-        <Text style={styles.textoBotao}>Zerar</Text>
-      </TouchableOpacity>
+      />
+
     </View>
   );
 }
@@ -69,27 +108,28 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
 
-  botaoIncrementar: {
-    backgroundColor: "#4caf50",
+  botao: {
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 10,
     marginBottom: 10,
+    minWidth: 180,
+  },
+
+  botaoIncrementar: {
+    backgroundColor: "#4caf50",
   },
 
   botaoDecrementar: {
     backgroundColor: "#f44336",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    marginBottom: 10,
   },
 
   botaoZerar: {
     backgroundColor: "#2196f3",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 10,
+  },
+
+  botaoDesativado: {
+    backgroundColor: "#bdbdbd",
   },
 
   textoBotao: {
