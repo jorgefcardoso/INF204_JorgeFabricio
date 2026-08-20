@@ -16,12 +16,10 @@ export default function App() {
     { id: 4, descricao: "Finalizar Roteiro de Prática 02", concluida: false },
   ]);
 
-  // Utilização do método filter() para obter somente as tarefas pendentes.
   const tarefasPendentes: Tarefa[] = tarefas.filter(
     (tarefa: Tarefa) => !tarefa.concluida,
   );
 
-  // Utilização do operador spread para adicionar uma tarefa ao estado.
   const adicionarTarefa = (): void => {
     setTarefas((tarefasAtuais: Tarefa[]): Tarefa[] => {
       const maiorId: number = tarefasAtuais.reduce(
@@ -51,7 +49,7 @@ export default function App() {
 
       <Text style={styles.subtitulo}>Todas as tarefas</Text>
 
-      {/* Renderização da lista principal utilizando o método map(). */}
+      {/* Renderização da lista principal utilizando map */}
       {tarefas.map((tarefa: Tarefa) => (
         <ItemTarefa key={tarefa.id} tarefa={tarefa} />
       ))}
