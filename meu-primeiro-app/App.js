@@ -1,141 +1,118 @@
 import React, { useState } from "react";
 import {
-  Text,
-  View,
-  TouchableOpacity,
+  ScrollView,
   StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-
-const BotaoCustomizado = ({
-  titulo,
-  ativo = true,
-  onPress,
-  tipo,
-}) => {
-  return (
-    <TouchableOpacity
-      style={[
-        styles.botao,
-        ativo
-          ? tipo === "incrementar"
-            ? styles.botaoIncrementar
-            : tipo === "decrementar"
-            ? styles.botaoDecrementar
-            : styles.botaoZerar
-          : styles.botaoDesativado,
-      ]}
-      onPress={onPress}
-      disabled={!ativo}
-    >
-      <Text style={styles.textoBotao}>
-        {titulo}
-      </Text>
-    </TouchableOpacity>
-  );
-};
+import ItemTarefa from "./ItemTarefa";
 
 export default function App() {
-  const [contagem, setContagem] = useState(0);
+  const [tarefas, setTarefas] = useState([
+    { id: 1, descricao: "Estudar ES6+", concluida: true },
+    { id: 2, descricao: "Configurar ambiente Expo", concluida: true },
+    { id: 3, descricao: "Entender o funcionamento do JSX", concluida: false },
+    { id: 4, descricao: "Finalizar Roteiro de Prática 02", concluida: false },
+  ]);
 
-  const incrementar = () => {
-    setContagem(contagem + 1);
-  };
+  // Utilização do método filter() para obter somente as tarefas pendentes.
+  const tarefasPendentes = tarefas.filter(
+    (tarefa) => !tarefa.concluida,
+  );
 
-  const decrementar = () => {
-    if (contagem > 0) {
-      setContagem(contagem - 1);
-    }
-  };
+  // Utilização do operador spread para adicionar uma tarefa ao estado.
+  const adicionarTarefa = () => {
+    setTarefas((tarefasAtuais) => {
+      const maiorId = tarefasAtuais.reduce(
+        (maior, tarefa) => Math.max(maior, tarefa.id),
+        0,
+      );
 
-  const zerar = () => {
-    setContagem(0);
+      const proximoId = maiorId + 1;
+
+      const novaTarefa = {
+        id: proximoId,
+        descricao: `Nova tarefa ${proximoId}`,
+        concluida: false,
+      };
+
+      return [...tarefasAtuais, novaTarefa];
+    });
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text style={styles.titulo}>Lista de Tarefas</Text>
 
-      <Text style={styles.titulo}>
-        Contagem Atual:
-      </Text>
+      <Text style={styles.subtitulo}>Todas as tarefas</Text>
 
-      <Text style={styles.numero}>
-        {contagem}
-      </Text>
+      {/* Renderização da lista principal utilizando o método map(). */}
+      {tarefas.map((tarefa) => (
+        <ItemTarefa key={tarefa.id} tarefa={tarefa} />
+      ))}
 
-      <BotaoCustomizado
-        titulo="Incrementar +1"
-        ativo={true}
-        tipo="incrementar"
-        onPress={incrementar}
-      />
+      <Text style={styles.subtitulo}>Tarefas pendentes</Text>
 
-      <BotaoCustomizado
-        titulo="Decrementar -1"
-        ativo={contagem > 0}
-        tipo="decrementar"
-        onPress={decrementar}
-      />
+      {/* Renderização condicional com operador ternário. */}
+      {tarefasPendentes.length > 0 ? (
+        tarefasPendentes.map((tarefa) => (
+          <ItemTarefa key={`pendente-${tarefa.id}`} tarefa={tarefa} />
+        ))
+      ) : (
+        <Text style={styles.mensagem}>Nenhuma tarefa pendente.</Text>
+      )}
 
-      <BotaoCustomizado
-        titulo="Zerar"
-        ativo={contagem > 0}
-        tipo="zerar"
-        onPress={zerar}
-      />
-
-    </View>
+      <TouchableOpacity
+        style={styles.botao}
+        onPress={adicionarTarefa}
+      >
+        <Text style={styles.textoBotao}>Adicionar nova tarefa</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
+    flexGrow: 1,
+    backgroundColor: "#f5f5f5",
+    paddingTop: 50,
+    paddingBottom: 30,
+    paddingHorizontal: 20,
   },
-
   titulo: {
-    fontSize: 20,
-    color: "#333333",
-    marginBottom: 10,
-  },
-
-  numero: {
-    fontSize: 48,
+    fontSize: 24,
     fontWeight: "bold",
-    color: "#4caf50",
-    marginBottom: 30,
+    marginBottom: 20,
+    color: "#20325a",
   },
-
-  botao: {
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 10,
+  subtitulo: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#20325a",
+    marginTop: 10,
     marginBottom: 10,
-    minWidth: 180,
   },
-
-  botaoIncrementar: {
-    backgroundColor: "#4caf50",
+  mensagem: {
+    fontSize: 16,
+    color: "#555555",
+    marginBottom: 10,
   },
-
-  botaoDecrementar: {
-    backgroundColor: "#f44336",
+  botao: {
+    backgroundColor: "#20325a",
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 15,
   },
-
-  botaoZerar: {
-    backgroundColor: "#2196f3",
-  },
-
-  botaoDesativado: {
-    backgroundColor: "#bdbdbd",
-  },
-
   textoBotao: {
     color: "#ffffff",
     fontSize: 16,
     fontWeight: "bold",
-    textAlign: "center",
   },
 });
