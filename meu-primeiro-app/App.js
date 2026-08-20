@@ -10,18 +10,16 @@ import ItemTarefa from "./ItemTarefa";
 
 export default function App() {
   const [tarefas, setTarefas] = useState([
-    { id: 1, descricao: "Estudar ES6+", concluida: true },
-    { id: 2, descricao: "Configurar ambiente Expo", concluida: true },
+    { id: 1, descricao: "Ir a aula", concluida: true },
+    { id: 2, descricao: "Configurar ambiente", concluida: true },
     { id: 3, descricao: "Entender o funcionamento do JSX", concluida: false },
-    { id: 4, descricao: "Finalizar Roteiro de Prática 02", concluida: false },
+    { id: 4, descricao: "Finalizar Prática 02", concluida: false },
   ]);
 
-  // Utilização do método filter() para obter somente as tarefas pendentes.
   const tarefasPendentes = tarefas.filter(
     (tarefa) => !tarefa.concluida,
   );
 
-  // Utilização do operador spread para adicionar uma tarefa ao estado.
   const adicionarTarefa = () => {
     setTarefas((tarefasAtuais) => {
       const maiorId = tarefasAtuais.reduce(
@@ -50,14 +48,14 @@ export default function App() {
 
       <Text style={styles.subtitulo}>Todas as tarefas</Text>
 
-      {/* Renderização da lista principal utilizando o método map(). */}
+      {/* Renderização da lista principal utilizando o map */}
       {tarefas.map((tarefa) => (
         <ItemTarefa key={tarefa.id} tarefa={tarefa} />
       ))}
 
       <Text style={styles.subtitulo}>Tarefas pendentes</Text>
 
-      {/* Renderização condicional com operador ternário. */}
+      {/* Renderização condicional com operador*/}
       {tarefasPendentes.length > 0 ? (
         tarefasPendentes.map((tarefa) => (
           <ItemTarefa key={`pendente-${tarefa.id}`} tarefa={tarefa} />
