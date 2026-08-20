@@ -10,7 +10,7 @@ import ItemTarefa, { Tarefa } from "./ItemTarefa";
 
 export default function App() {
   const [tarefas, setTarefas] = useState<Tarefa[]>([
-    { id: 1, descricao: "Estudar ES6+", concluida: true },
+    { id: 1, descricao: "Estudar", concluida: true },
     { id: 2, descricao: "Configurar ambiente Expo", concluida: true },
     { id: 3, descricao: "Entender o funcionamento do JSX", concluida: false },
     { id: 4, descricao: "Finalizar Roteiro de Prática 02", concluida: false },
