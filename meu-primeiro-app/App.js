@@ -12,8 +12,9 @@ export default function App() {
   const [tarefas, setTarefas] = useState([
     { id: 1, descricao: "Ir a aula", concluida: true },
     { id: 2, descricao: "Configurar ambiente", concluida: true },
-    { id: 3, descricao: "Entender o funcionamento do JSX", concluida: false },
-    { id: 4, descricao: "Finalizar Prática 02", concluida: false },
+    { id: 3, descricao: "Entender JSX", concluida: true },
+    { id: 4, descricao: "Finalizar Pratica 2", concluida: true },
+    { id: 5, descricao: "Testar Pratica 2", concluida: false },
   ]);
 
   const tarefasPendentes = tarefas.filter(
