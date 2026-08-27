@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import JogoDaVelha from "./JogoDaVelha";
 
-function CartaoPerfil({ nomeInicial, profissao, avatarUri }) {
+function CartaoPerfil({ nomeInicial, profissao }) {
   const [nome, setNome] = useState(nomeInicial);
   const [seguindo, setSeguindo] = useState(false);
 
@@ -20,8 +20,6 @@ function CartaoPerfil({ nomeInicial, profissao, avatarUri }) {
 
   return (
     <View style={styles.cartao}>
-      {/* Imagem Remota: width e height definidos no estilo */}
-      <Image source={{ uri: avatarUri }} style={styles.avatar} />
 
       <Text style={styles.nomeUsuario}>{nome}</Text>
       <Text style={styles.profissao}>{profissao}</Text>
@@ -58,17 +56,14 @@ export default function App() {
       <CartaoPerfil
         nomeInicial="Joao Vitor"
         profissao="Engenheiro de Software"
-        avatarUri="https://i.pravatar.cc/150?img=1"
       />
       <CartaoPerfil
-        nomeInicial="Ana Souza"
-        profissao="Desenvolvedora Mobile"
-        avatarUri="https://i.pravatar.cc/150?img=5"
+        nomeInicial="Jorge Lucas Freitas Cardoso"
+        profissao="Desenvolvedor Full-Stack"
       />
       <CartaoPerfil
-        nomeInicial="Carlos Lima"
-        profissao="UX Designer"
-        avatarUri="https://i.pravatar.cc/150?img=8"
+        nomeInicial="Fabricio Fialho"
+        profissao="Desenvolvedor Mobile"
       />
 
       <Text style={styles.subtitulo}>Jogo da Velha</Text>
@@ -110,12 +105,6 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: "100%",
     marginBottom: 20,
-  },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 15,
   },
   nomeUsuario: {
     fontSize: 22,
