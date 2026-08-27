@@ -5,72 +5,74 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image,
+  TextInput,
 } from "react-native";
-import ItemTarefa from "./ItemTarefa";
+import JogoDaVelha from "./JogoDaVelha";
 
-export default function App() {
-  const [tarefas, setTarefas] = useState([
-    { id: 1, descricao: "Ir a aula", concluida: true },
-    { id: 2, descricao: "Configurar ambiente", concluida: true },
-    { id: 3, descricao: "Entender JSX", concluida: true },
-    { id: 4, descricao: "Finalizar Pratica 2", concluida: true },
-    { id: 5, descricao: "Testar Pratica 2", concluida: false },
-  ]);
+function CartaoPerfil({ nomeInicial, profissao, avatarUri }) {
+  const [nome, setNome] = useState(nomeInicial);
+  const [seguindo, setSeguindo] = useState(false);
 
-  const tarefasPendentes = tarefas.filter(
-    (tarefa) => !tarefa.concluida,
-  );
-
-  const adicionarTarefa = () => {
-    setTarefas((tarefasAtuais) => {
-      const maiorId = tarefasAtuais.reduce(
-        (maior, tarefa) => Math.max(maior, tarefa.id),
-        0,
-      );
-
-      const proximoId = maiorId + 1;
-
-      const novaTarefa = {
-        id: proximoId,
-        descricao: `Nova tarefa ${proximoId}`,
-        concluida: false,
-      };
-
-      return [...tarefasAtuais, novaTarefa];
-    });
+  const alternarSeguir = () => {
+    setSeguindo((atual) => !atual);
   };
 
+  return (
+    <View style={styles.cartao}>
+      {/* Imagem Remota: width e height definidos no estilo */}
+      <Image source={{ uri: avatarUri }} style={styles.avatar} />
+
+      <Text style={styles.nomeUsuario}>{nome}</Text>
+      <Text style={styles.profissao}>{profissao}</Text>
+
+      {/* Multiplos estilos via array: simula o estado "Ja Seguindo" */}
+      <TouchableOpacity
+        style={[styles.botao, seguindo && styles.botaoDesativado]}
+        activeOpacity={0.7}
+        onPress={alternarSeguir}
+      >
+        <Text style={styles.textoBotao}>
+          {seguindo ? "Seguindo" : "Seguir"}
+        </Text>
+      </TouchableOpacity>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Alterar nome..."
+        value={nome}
+        onChangeText={(texto) => setNome(texto)}
+      />
+    </View>
+  );
+}
+
+export default function App() {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.titulo}>Lista de Tarefas</Text>
+      <Text style={styles.titulo}>Perfis</Text>
 
-      <Text style={styles.subtitulo}>Todas as tarefas</Text>
+      <CartaoPerfil
+        nomeInicial="Joao Vitor"
+        profissao="Engenheiro de Software"
+        avatarUri="https://i.pravatar.cc/150?img=1"
+      />
+      <CartaoPerfil
+        nomeInicial="Ana Souza"
+        profissao="Desenvolvedora Mobile"
+        avatarUri="https://i.pravatar.cc/150?img=5"
+      />
+      <CartaoPerfil
+        nomeInicial="Carlos Lima"
+        profissao="UX Designer"
+        avatarUri="https://i.pravatar.cc/150?img=8"
+      />
 
-      {/* Renderização da lista principal utilizando o map */}
-      {tarefas.map((tarefa) => (
-        <ItemTarefa key={tarefa.id} tarefa={tarefa} />
-      ))}
-
-      <Text style={styles.subtitulo}>Tarefas pendentes</Text>
-
-      {/* Renderização condicional com operador*/}
-      {tarefasPendentes.length > 0 ? (
-        tarefasPendentes.map((tarefa) => (
-          <ItemTarefa key={`pendente-${tarefa.id}`} tarefa={tarefa} />
-        ))
-      ) : (
-        <Text style={styles.mensagem}>Nenhuma tarefa pendente.</Text>
-      )}
-
-      <TouchableOpacity
-        style={styles.botao}
-        onPress={adicionarTarefa}
-      >
-        <Text style={styles.textoBotao}>Adicionar nova tarefa</Text>
-      </TouchableOpacity>
+      <Text style={styles.subtitulo}>Jogo da Velha</Text>
+      <JogoDaVelha />
     </ScrollView>
   );
 }
@@ -78,40 +80,74 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#F5F5F5",
     paddingTop: 50,
     paddingBottom: 30,
     paddingHorizontal: 20,
+    alignItems: "center",
   },
   titulo: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    color: "#20325a",
+    color: "#20325A",
   },
   subtitulo: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#20325a",
+    color: "#20325A",
     marginTop: 10,
-    marginBottom: 10,
+    marginBottom: 15,
   },
-  mensagem: {
+  cartao: {
+    backgroundColor: "#FFFFFF",
+    padding: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+    width: "100%",
+    marginBottom: 20,
+  },
+  avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 15,
+  },
+  nomeUsuario: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#14325A",
+  },
+  profissao: {
     fontSize: 16,
-    color: "#555555",
-    marginBottom: 10,
+    color: "#505050",
+    marginBottom: 20,
   },
   botao: {
-    backgroundColor: "#20325a",
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    backgroundColor: "#0064A0",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
     borderRadius: 8,
-    alignItems: "center",
-    marginTop: 15,
+    marginBottom: 15,
+  },
+  botaoDesativado: {
+    backgroundColor: "#AAAAAA",
   },
   textoBotao: {
-    color: "#ffffff",
-    fontSize: 16,
+    color: "#FFFFFF",
     fontWeight: "bold",
+    fontSize: 16,
+  },
+  input: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#CCC",
+    borderRadius: 8,
+    padding: 10,
+    textAlign: "center",
   },
 });
