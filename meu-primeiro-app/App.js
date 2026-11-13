@@ -29,7 +29,8 @@ function EcraPrincipal() {
   // Acesso a instancia do banco de dados relacional
   const db = useSQLiteContext();
 
-  const [nomeUsuario, setNomeUsuario] = useState("Visitante");
+  // Desafio: o utilizador passa a ser um objeto (serializado no AsyncStorage)
+  const [usuario, setUsuario] = useState({ nome: "Visitante", logado: true });
   const [tarefas, setTarefas] = useState([]);
   const [novaTarefa, setNovaTarefa] = useState("");
 
@@ -39,17 +40,22 @@ function EcraPrincipal() {
     carregarTarefas();
   }, []);
 
-  // Leitura Assincrona Chave-Valor
+  // Leitura Assincrona Chave-Valor (String JSON -> Objeto)
+  // Chave nova para nao tentar fazer JSON.parse da string antiga "@AppTarefas:Nome"
   const carregarPreferencias = async () => {
-    const nomeSalvo = await AsyncStorage.getItem("@AppTarefas:Nome");
-    if (nomeSalvo) setNomeUsuario(nomeSalvo);
+    try {
+      const usuarioSalvo = await AsyncStorage.getItem("@AppTarefas:Usuario");
+      if (usuarioSalvo) setUsuario(JSON.parse(usuarioSalvo));
+    } catch (erro) {
+      console.error("Falha ao ler o utilizador", erro);
+    }
   };
 
-  // Gravacao Assincrona Chave-Valor
+  // Gravacao Assincrona Chave-Valor (Objeto -> String JSON)
   const salvarNome = async () => {
-    const novoNome = "Estudante INF204";
-    await AsyncStorage.setItem("@AppTarefas:Nome", novoNome);
-    setNomeUsuario(novoNome);
+    const novoUsuario = { nome: "Estudante INF204", logado: true };
+    await AsyncStorage.setItem("@AppTarefas:Usuario", JSON.stringify(novoUsuario));
+    setUsuario(novoUsuario);
   };
 
   // Leitura SQL (SELECT)
@@ -95,7 +101,7 @@ function EcraPrincipal() {
   return (
     <View style={styles.container}>
       <View style={styles.cabecalho}>
-        <Text style={styles.titulo}>Olá, {nomeUsuario}!</Text>
+        <Text style={styles.titulo}>Olá, {usuario.nome}!</Text>
         <TouchableOpacity style={styles.botaoAcao} onPress={salvarNome}>
           <Text style={styles.textoBotao}>Mudar Nome</Text>
         </TouchableOpacity>
