@@ -82,6 +82,16 @@ function EcraPrincipal() {
     carregarTarefas();
   };
 
+  // Desafio: Eliminacao SQL com Bindings de Seguranca (DELETE)
+  const eliminarTarefa = async (id) => {
+    try {
+      await db.runAsync("DELETE FROM tarefas WHERE id = ?;", [id]);
+      carregarTarefas();
+    } catch (erro) {
+      console.error("Erro no delete", erro);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.cabecalho}>
@@ -107,11 +117,16 @@ function EcraPrincipal() {
         data={tarefas}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.cartao} onPress={() => alternarStatus(item.id, item.concluida)}>
-            <Text style={[styles.textoTarefa, item.concluida === 1 && styles.textoConcluido]}>
-              {item.descricao}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.cartao}>
+            <TouchableOpacity style={styles.areaTarefa} onPress={() => alternarStatus(item.id, item.concluida)}>
+              <Text style={[styles.textoTarefa, item.concluida === 1 && styles.textoConcluido]}>
+                {item.descricao}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.botaoEliminar} onPress={() => eliminarTarefa(item.id)}>
+              <Text style={styles.textoBotao}>X</Text>
+            </TouchableOpacity>
+          </View>
         )}
       />
     </View>
@@ -127,7 +142,9 @@ const styles = StyleSheet.create({
   input: { flex: 1, borderWidth: 1, borderColor: "#CCC", borderRadius: 8, padding: 10, backgroundColor: "#FFF" },
   botaoAdd: { backgroundColor: "#0064A0", padding: 15, borderRadius: 8, marginLeft: 10, justifyContent: "center" },
   textoBotao: { color: "#FFF", fontWeight: "bold" },
-  cartao: { backgroundColor: "#FFF", padding: 15, marginBottom: 10, borderRadius: 8, elevation: 2 },
+  cartao: { backgroundColor: "#FFF", padding: 15, marginBottom: 10, borderRadius: 8, elevation: 2, flexDirection: "row", alignItems: "center" },
+  areaTarefa: { flex: 1 },
+  botaoEliminar: { backgroundColor: "#D32F2F", width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center", marginLeft: 10 },
   textoTarefa: { fontSize: 18, color: "#333" },
   textoConcluido: { textDecorationLine: "line-through", color: "#999" }
 });
