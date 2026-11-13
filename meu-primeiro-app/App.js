@@ -36,6 +36,7 @@ function EcraPrincipal() {
   // Efeito para carregar dados assim que o ecra abrir
   useEffect(() => {
     carregarPreferencias();
+    carregarTarefas();
   }, []);
 
   // Leitura Assincrona Chave-Valor
@@ -51,6 +52,36 @@ function EcraPrincipal() {
     setNomeUsuario(novoNome);
   };
 
+  // Leitura SQL (SELECT)
+  const carregarTarefas = async () => {
+    try {
+      const resultados = await db.getAllAsync("SELECT * FROM tarefas ORDER BY id DESC;");
+      setTarefas(resultados);
+    } catch (erro) {
+      console.error("Falha ao ler dados", erro);
+    }
+  };
+
+  // Insercao SQL com Bindings de Seguranca (INSERT)
+  const adicionarTarefa = async () => {
+    if (novaTarefa.trim() === "") return;
+
+    try {
+      await db.runAsync("INSERT INTO tarefas (descricao, concluida) VALUES (?, ?);", [novaTarefa, 0]);
+      setNovaTarefa("");
+      carregarTarefas(); // Atualiza a lista visualmente
+    } catch (erro) {
+      console.error("Erro no insert", erro);
+    }
+  };
+
+  // Atualizacao SQL (UPDATE)
+  const alternarStatus = async (id, statusAtual) => {
+    const novoStatus = statusAtual === 1 ? 0 : 1;
+    await db.runAsync("UPDATE tarefas SET concluida = ? WHERE id = ?;", [novoStatus, id]);
+    carregarTarefas();
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.cabecalho}>
@@ -59,6 +90,30 @@ function EcraPrincipal() {
           <Text style={styles.textoBotao}>Mudar Nome</Text>
         </TouchableOpacity>
       </View>
+
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Nova tarefa..."
+          value={novaTarefa}
+          onChangeText={setNovaTarefa}
+        />
+        <TouchableOpacity style={styles.botaoAdd} onPress={adicionarTarefa}>
+          <Text style={styles.textoBotao}>Add</Text>
+        </TouchableOpacity>
+      </View>
+
+      <FlatList
+        data={tarefas}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity style={styles.cartao} onPress={() => alternarStatus(item.id, item.concluida)}>
+            <Text style={[styles.textoTarefa, item.concluida === 1 && styles.textoConcluido]}>
+              {item.descricao}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
     </View>
   );
 }
@@ -68,5 +123,11 @@ const styles = StyleSheet.create({
   cabecalho: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
   titulo: { fontSize: 24, fontWeight: "bold", color: "#14325A" },
   botaoAcao: { backgroundColor: "#808080", padding: 10, borderRadius: 8 },
-  textoBotao: { color: "#FFF", fontWeight: "bold" }
+  inputContainer: { flexDirection: "row", marginBottom: 20 },
+  input: { flex: 1, borderWidth: 1, borderColor: "#CCC", borderRadius: 8, padding: 10, backgroundColor: "#FFF" },
+  botaoAdd: { backgroundColor: "#0064A0", padding: 15, borderRadius: 8, marginLeft: 10, justifyContent: "center" },
+  textoBotao: { color: "#FFF", fontWeight: "bold" },
+  cartao: { backgroundColor: "#FFF", padding: 15, marginBottom: 10, borderRadius: 8, elevation: 2 },
+  textoTarefa: { fontSize: 18, color: "#333" },
+  textoConcluido: { textDecorationLine: "line-through", color: "#999" }
 });
