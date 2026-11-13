@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, FlatList, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity } from "react-native";
 import api from "./src/services/api";
+import FormularioUsuario from "./src/screens/FormularioUsuario";
 
 export default function App() {
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [utilizadores, setUtilizadores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -32,6 +34,11 @@ export default function App() {
     buscarDados();
   };
 
+  // Desafio: ecra adicional com o formulario de POST
+  if (mostrarFormulario) {
+    return <FormularioUsuario onVoltar={() => setMostrarFormulario(false)} />;
+  }
+
   // Fornece um feedback visual enquanto o estado e "Pending"
   if (loading) {
     return (
@@ -45,6 +52,9 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Lista de Utilizadores</Text>
+      <TouchableOpacity style={styles.botaoNovo} onPress={() => setMostrarFormulario(true)}>
+        <Text style={styles.textoBotao}>+ Novo Utilizador</Text>
+      </TouchableOpacity>
       <FlatList
         data={utilizadores}
         keyExtractor={(item) => item.id.toString()}
@@ -67,5 +77,7 @@ const styles = StyleSheet.create({
   titulo: { fontSize: 24, fontWeight: "bold", marginBottom: 20, color: "#14325A" },
   cartao: { backgroundColor: "#FFF", padding: 15, marginBottom: 10, borderRadius: 8, elevation: 2 },
   nome: { fontSize: 18, fontWeight: "bold" },
-  email: { color: "#666", marginTop: 5 }
+  email: { color: "#666", marginTop: 5 },
+  botaoNovo: { backgroundColor: "#0064A0", padding: 12, borderRadius: 8, alignItems: "center", marginBottom: 15 },
+  textoBotao: { color: "#FFF", fontWeight: "bold" }
 });
