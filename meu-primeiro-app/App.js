@@ -5,23 +5,32 @@ import api from "./src/services/api";
 export default function App() {
   const [utilizadores, setUtilizadores] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Funcao reutilizada na montagem e no pull-to-refresh
+  const buscarDados = async () => {
+    try {
+      // Os dados devolvidos ficam na propriedade "data" do Axios
+      const resposta = await api.get("/users");
+      setUtilizadores(resposta.data);
+    } catch (erro) {
+      console.error("Erro ao buscar dados:", erro.message);
+    } finally {
+      // Oculta os indicadores de carregamento, independentemente de erro ou sucesso
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
-    const buscarDados = async () => {
-      try {
-        // Os dados devolvidos ficam na propriedade "data" do Axios
-        const resposta = await api.get("/users");
-        setUtilizadores(resposta.data);
-      } catch (erro) {
-        console.error("Erro ao buscar dados:", erro.message);
-      } finally {
-        // Oculta o indicador de carregamento, independentemente de erro ou sucesso
-        setLoading(false);
-      }
-    };
-
     buscarDados();
   }, []); // Array vazio garante execucao unica na montagem
+
+  // Desafio: Pull-to-Refresh -> exibe o icone nativo e refaz o pedido a API
+  const aoPuxarLista = () => {
+    setRefreshing(true);
+    buscarDados();
+  };
 
   // Fornece um feedback visual enquanto o estado e "Pending"
   if (loading) {
@@ -39,6 +48,8 @@ export default function App() {
       <FlatList
         data={utilizadores}
         keyExtractor={(item) => item.id.toString()}
+        refreshing={refreshing}
+        onRefresh={aoPuxarLista}
         renderItem={({ item }) => (
           <View style={styles.cartao}>
             <Text style={styles.nome}>{item.name}</Text>
