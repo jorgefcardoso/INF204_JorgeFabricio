@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, ActivityIndicator } from "react-native";
 import { useAuth } from "../hooks/useAuth";
 import { useTema } from "../hooks/useTema";
 
@@ -40,7 +40,16 @@ function TelaDashboard() {
 
 // --- ROTEADOR PRINCIPAL ---
 export default function Rotas() {
-  const { logado } = useAuth(); // Escuta ativamente o estado global
+  const { logado, carregando } = useAuth(); // Escuta ativamente o estado global
+
+  // Desafio: enquanto a sessao e lida do disco, nao decide a rota ainda
+  if (carregando) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>
